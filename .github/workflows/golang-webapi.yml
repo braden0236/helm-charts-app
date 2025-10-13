@@ -38,6 +38,5 @@ jobs:
 
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          files: ${{ env.VALUES_FILE }}
+          file_pattern: ${{ env.VALUES_FILE }}
           commit_message: Apply image name of changes for golang-webapi
-          token: ${{ secrets.GITHUB_TOKEN }}
