@@ -1,0 +1,43 @@
+name: Repository Dispatch
+
+on:
+  repository_dispatch:
+    types: [golang-webapi]
+
+env:
+  VALUES_FILE: /values/dev/golang-webapi.yaml
+
+jobs:
+  update-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: 🛠️ Set up yq
+        uses: mikefarah/yq@v4.44.1
+
+      - name: Update Image Version
+        run: |
+          echo "Updating ${{ env.VALUES_FILE }} to tag ${{ github.event.client_payload.tag }}"
+
+          yq -i ".image.tag = \"${{ github.event.client_payload.tag }}\"" ${{ env.VALUES_FILE }}
+
+      - name: 🔍 Assert Updated Tag
+        run: |
+          ACTUAL_TAG=$(yq ".image.tag" ${{ env.VALUES_FILE }})
+          EXPECTED_TAG="${{ github.event.client_payload.tag }}"
+
+          if [ "$ACTUAL_TAG" != "$EXPECTED_TAG" ]; then
+            echo "::error:: Assertion failed! The tag written to ${{ env.VALUES_FILE }} ($ACTUAL_TAG) does NOT match the expected tag ($EXPECTED_TAG)."
+            exit 1
+          fi
+
+      - uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          files: ${{ env.VALUES_FILE }}
+          commit_message: Apply image name of changes for golang-webapi
+          token: ${{ secrets.GITHUB_TOKEN }}
