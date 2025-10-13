@@ -5,7 +5,7 @@ on:
     types: [golang-webapi]
 
 env:
-  VALUES_FILE: /values/dev/golang-webapi.yaml
+  VALUES_FILE: values/dev/golang-webapi.yaml
 
 jobs:
   update-tag:
