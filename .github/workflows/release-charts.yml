@@ -31,7 +31,6 @@ jobs:
         uses: helm/chart-releaser-action@v1.7.0
         with:
           skip_upload: true
-          pages_branch: "main"
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
